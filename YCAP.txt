@@ -1,0 +1,821 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Thu Oct 8 10:48:54 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Thu Oct 08 2026 10:32:09 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> CREATE TABLE customer (
+  2  cust_id VARCHAR(5) PRIMARY KEY,
+  3      f_name VARCHAR(50),
+  4      l_name VARCHAR(50),
+  5      area VARCHAR(10),
+  6      phone_no VARCHAR(10)
+  7  );
+CREATE TABLE customer (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE customer (
+  2      cust_id VARCHAR(5) PRIMARY KEY,
+  3      f_name VARCHAR(50),
+  4      l_name VARCHAR(50),
+  5      area VARCHAR(10),
+  6      phone_no VARCHAR(10)
+  7  );
+CREATE TABLE customer (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE shopper (
+  2      shopper_id VARCHAR(5) PRIMARY KEY,
+  3      first_name VARCHAR(50),
+  4      last_name VARCHAR(50),
+  5      area_code VARCHAR(10),
+  6      phone VARCHAR(10)
+  7  );
+
+Table created.
+
+SQL> INSERT INTO shopper VALUES ('S001', 'Rahul', 'Nair', 'A101', '9876543210');
+
+1 row created.
+
+SQL> INSERT INTO shopper VALUES ('S002', 'Sneha', 'Patil', 'A102', '9123456780');
+
+1 row created.
+
+SQL> INSERT INTO shopper VALUES ('S003', 'Arjun', 'Desai', 'A103', '9988776655');
+
+1 row created.
+
+SQL> INSERT INTO shopper VALUES ('S004', 'Meera', 'Joshi', 'A104', '8899001122');
+
+1 row created.
+
+SQL> INSERT INTO shopper VALUES ('S005', 'Priya', 'Sharma', 'A105', '7766554433');
+
+1 row created.
+
+SQL> CREATE TABLE product_group (
+  2      group_id VARCHAR(5) PRIMARY KEY,
+  3      group_name VARCHAR(30)
+  4  );
+
+Table created.
+
+SQL> INSERT INTO product_group VALUES ('PG01', 'Electronics');
+
+1 row created.
+
+SQL> INSERT INTO product_group VALUES ('PG02', 'Clothing');
+
+1 row created.
+
+SQL> INSERT INTO product_group VALUES ('PG03', 'Books');
+
+1 row created.
+
+SQL> INSERT INTO product_group VALUES ('PG04', 'Pens');
+
+1 row created.
+
+SQL> CREATE TABLE product (
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00904: : invalid identifier
+
+
+SQL> CREATE TABLE item (
+  2  item_id VARCHAR(5) PRIMARY KEY,
+  3      item_name VARCHAR(50),
+  4      group_id VARCHAR(5),
+  5      price DECIMAL(8,2),
+  6      stock INT,
+  7      FOREIGN KEY (group_id) REFERENCES product_group(group_id)
+  8  );
+
+Table created.
+
+SQL> INSERT INTO item VALUES ('I001', 'Smartphone', 'PG01', 25000.00, 50);
+
+1 row created.
+
+SQL> INSERT INTO item VALUES ('I002', 'T-Shirt', 'PG02', 500.00, 200);
+
+1 row created.
+
+SQL> INSERT INTO item VALUES ('I003', 'Novel', 'PG03', 300.00, 100);
+
+1 row created.
+
+SQL> INSERT INTO item VALUES ('I004', 'Laptop', 'PG04', 3300.00, 300);
+
+1 row created.
+
+SQL> CREATE TABLE purchase (
+  2      purchase_id VARCHAR(5) PRIMARY KEY,
+  3      shopper_id VARCHAR(5),
+  4      purchase_date DATE,
+  5      total_value DECIMAL(10,2),
+  6      FOREIGN KEY (shopper_id) REFERENCES shopper(shopper_id)
+  7  );
+
+Table created.
+
+SQL> INSERT INTO purchase VALUES ('PU001', 'S001', TO_DATE('2026-10-08','YYYY-MM-DD'), 25500.00);
+
+1 row created.
+
+SQL> INSERT INTO purchase VALUES ('PU002', 'S002', TO_DATE('2026-10-07','YYYY-MM-DD'), 5300.00);
+
+1 row created.
+
+SQL> INSERT INTO purchase VALUES ('PU003', 'S003', TO_DATE('2026-11-10','YYYY-MM-DD'), 3400.00);
+
+1 row created.
+
+SQL> CREATE TABLE purchase_details (
+  2      detail_id INT PRIMARY KEY,
+  3      purchase_id VARCHAR(5),
+  4      item_id VARCHAR(5),
+  5      quantity INT,
+  6      price DECIMAL(8,2),
+  7      FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id),
+  8      FOREIGN KEY (item_id) REFERENCES item(item_id)
+  9  );
+
+Table created.
+
+SQL> INSERT INTO purchase_details VALUES (1, 'PU001', 'I001', 1, 25000.00);
+
+1 row created.
+
+SQL> INSERT INTO purchase_details VALUES (2, 'PU001', 'I002', 1, 500.00);
+
+1 row created.
+
+SQL> INSERT INTO purchase_details VALUES (3, 'PU002', 'I003', 2, 300.00);
+
+1 row created.
+
+SQL> INSERT INTO purchase_details VALUES (4, 'PU002', 'I004', 2, 400.00);
+
+1 row created.
+
+SQL> CREATE TABLE bill (
+  2      bill_no VARCHAR(5) PRIMARY KEY,
+  3      purchase_id VARCHAR(5),
+  4      bill_date DATE,
+  5      bill_amount DECIMAL(10,2),
+  6      FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id)
+  7  );
+
+Table created.
+
+SQL> INSERT INTO bill VALUES ('B001', 'PU001', TO_DATE('2026-10-08','YYYY-MM-DD'), 25500.00);
+
+1 row created.
+
+SQL> INSERT INTO bill VALUES ('B002', 'PU002', TO_DATE('2026-10-07','YYYY-MM-DD'), 600.00);
+
+1 row created.
+
+SQL> INSERT INTO bill VALUES ('B003', 'PU003', TO_DATE('2026-04-03','YYYY-MM-DD'), 70000.00);
+
+1 row created.
+
+SQL> CREATE TABLE transaction (
+  2      txn_id VARCHAR(5) PRIMARY KEY,
+  3      bill_no VARCHAR(5),
+  4      txn_date DATE,
+  5      txn_mode VARCHAR(20),
+  6      txn_status VARCHAR(15),
+  7      FOREIGN KEY (bill_no) REFERENCES bill(bill_no)
+  8  );
+
+Table created.
+
+SQL> INSERT INTO transaction VALUES ('T001', 'B001', TO_DATE('2026-10-08','YYYY-MM-DD'), 'UPI', 'Success');
+
+1 row created.
+
+SQL> INSERT INTO transaction VALUES ('T002', 'B002', TO_DATE('2026-10-07','YYYY-MM-DD'), 'Card', 'Success');
+
+1 row created.
+
+SQL> SELECT * FROM shopper;
+
+SHOPP FIRST_NAME
+----- --------------------------------------------------
+LAST_NAME                                          AREA_CODE  PHONE
+-------------------------------------------------- ---------- ----------
+S001  Rahul
+Nair                                               A101       9876543210
+
+S002  Sneha
+Patil                                              A102       9123456780
+
+S003  Arjun
+Desai                                              A103       9988776655
+
+
+SHOPP FIRST_NAME
+----- --------------------------------------------------
+LAST_NAME                                          AREA_CODE  PHONE
+-------------------------------------------------- ---------- ----------
+S004  Meera
+Joshi                                              A104       8899001122
+
+S005  Priya
+Sharma                                             A105       7766554433
+
+
+SQL> SELECT first_name, area_code FROM shopper WHERE shopper_id = 'S003';
+
+FIRST_NAME                                         AREA_CODE
+-------------------------------------------------- ----------
+Arjun                                              A103
+
+SQL> SELECT first_name, last_name, phone FROM shopper;
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME                                          PHONE
+-------------------------------------------------- ----------
+Rahul
+Nair                                               9876543210
+
+Sneha
+Patil                                              9123456780
+
+Arjun
+Desai                                              9988776655
+
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME                                          PHONE
+-------------------------------------------------- ----------
+Meera
+Joshi                                              8899001122
+
+Priya
+Sharma                                             7766554433
+
+
+SQL>
+SQL> SELECT COUNT(*) FROM shopper;
+
+  COUNT(*)
+----------
+         5
+
+SQL> SELECT * FROM shopper WHERE area_code IN ('DA','MU','GH');
+
+no rows selected
+
+SQL> UPDATE shopper SET area_code = 'JK' WHERE shopper_id = 'S001';
+
+1 row updated.
+
+SQL> SELECT * FROM shopper WHERE first_name LIKE 'P%';
+
+SHOPP FIRST_NAME
+----- --------------------------------------------------
+LAST_NAME                                          AREA_CODE  PHONE
+-------------------------------------------------- ---------- ----------
+S005  Priya
+Sharma                                             A105       7766554433
+
+
+SQL> SELECT * FROM shopper WHERE area_code LIKE '_A%';
+
+no rows selected
+
+SQL> UPDATE shopper SET phone = '567889' WHERE first_name = 'Rajesh';
+
+0 rows updated.
+
+SQL> DELETE FROM shopper WHERE shopper_id = 'S009';
+
+0 rows deleted.
+
+SQL> SELECT * FROM product_group;
+
+GROUP GROUP_NAME
+----- ------------------------------
+PG01  Electronics
+PG02  Clothing
+PG03  Books
+PG04  Pens
+
+SQL> SELECT * FROM item WHERE price > 150;
+
+ITEM_ ITEM_NAME                                          GROUP      PRICE
+----- -------------------------------------------------- ----- ----------
+     STOCK
+----------
+I001  Smartphone                                         PG01       25000
+        50
+
+I002  T-Shirt                                            PG02         500
+       200
+
+I003  Novel                                              PG03         300
+       100
+
+
+ITEM_ ITEM_NAME                                          GROUP      PRICE
+----- -------------------------------------------------- ----- ----------
+     STOCK
+----------
+I004  Laptop                                             PG04        3300
+       300
+
+
+SQL> SELECT * FROM item WHERE price BETWEEN 100 AND 180;
+
+no rows selected
+
+SQL> SELECT item_name, price FROM item;
+
+ITEM_NAME                                               PRICE
+-------------------------------------------------- ----------
+Smartphone                                              25000
+T-Shirt                                                   500
+Novel                                                     300
+Laptop                                                   3300
+
+SQL> SELECT group_id, COUNT(*) FROM item GROUP BY group_id;
+
+GROUP   COUNT(*)
+----- ----------
+PG01           1
+PG02           1
+PG03           1
+PG04           1
+
+SQL> SELECT MAX(price), MIN(price) FROM item;
+
+MAX(PRICE) MIN(PRICE)
+---------- ----------
+     25000        300
+
+SQL> SELECT AVG(price) FROM item;
+
+AVG(PRICE)
+----------
+      7275
+
+SQL> SELECT * FROM item WHERE group_id IN ('PG01','PG02');
+
+ITEM_ ITEM_NAME                                          GROUP      PRICE
+----- -------------------------------------------------- ----- ----------
+     STOCK
+----------
+I001  Smartphone                                         PG01       25000
+        50
+
+I002  T-Shirt                                            PG02         500
+       200
+
+
+SQL> UPDATE item SET price = 55000 WHERE item_name = 'Laptop';
+
+1 row updated.
+
+SQL> SELECT * FROM item ORDER BY item_name ASC;
+
+ITEM_ ITEM_NAME                                          GROUP      PRICE
+----- -------------------------------------------------- ----- ----------
+     STOCK
+----------
+I004  Laptop                                             PG04       55000
+       300
+
+I003  Novel                                              PG03         300
+       100
+
+I001  Smartphone                                         PG01       25000
+        50
+
+
+ITEM_ ITEM_NAME                                          GROUP      PRICE
+----- -------------------------------------------------- ----- ----------
+     STOCK
+----------
+I002  T-Shirt                                            PG02         500
+       200
+
+
+SQL> SELECT * FROM purchase WHERE shopper_id = 'S002';
+
+PURCH SHOPP PURCHASE_ TOTAL_VALUE
+----- ----- --------- -----------
+PU002 S002  07-OCT-26        5300
+
+SQL> SELECT COUNT(*) FROM purchase;
+
+  COUNT(*)
+----------
+         3
+
+SQL> SELECT * FROM purchase WHERE EXTRACT(MONTH FROM purchase_date) < 8;
+
+no rows selected
+
+SQL> SELECT purchase_id, purchase_date FROM purchase;
+
+PURCH PURCHASE_
+----- ---------
+PU001 08-OCT-26
+PU002 07-OCT-26
+PU003 10-NOV-26
+
+SQL> UPDATE purchase SET total_value = 12000 WHERE purchase_id = 'PU005';
+
+0 rows updated.
+
+SQL> SELECT * FROM purchase_details;
+
+ DETAIL_ID PURCH ITEM_   QUANTITY      PRICE
+---------- ----- ----- ---------- ----------
+         1 PU001 I001           1      25000
+         2 PU001 I002           1        500
+         3 PU002 I003           2        300
+         4 PU002 I004           2        400
+
+SQL> SELECT item_id, SUM(quantity) FROM purchase_details GROUP BY item_id;
+
+ITEM_ SUM(QUANTITY)
+----- -------------
+I001              1
+I002              1
+I003              2
+I004              2
+
+SQL> SELECT item_id, SUM(quantity) AS total_qty
+  2  FROM purchase_details
+  3  GROUP BY item_id
+  4  HAVING SUM(quantity) > 3;
+
+no rows selected
+
+SQL> SELECT purchase_id, SUM(price * quantity) AS total_price
+  2  FROM purchase_details
+  3  GROUP BY purchase_id;
+
+PURCH TOTAL_PRICE
+----- -----------
+PU001       25500
+PU002        1400
+
+SQL> SELECT i.item_id, i.item_name
+  2  FROM item i
+  3  LEFT JOIN purchase_details pd ON i.item_id = pd.item_id
+  4  WHERE pd.item_id IS NULL;
+
+no rows selected
+
+SQL> SELECT * FROM bill;
+
+BILL_ PURCH BILL_DATE BILL_AMOUNT
+----- ----- --------- -----------
+B001  PU001 08-OCT-26       25500
+B002  PU002 07-OCT-26         600
+B003  PU003 03-APR-26       70000
+
+SQL> SELECT * FROM bill WHERE purchase_id = 'PU003';
+
+BILL_ PURCH BILL_DATE BILL_AMOUNT
+----- ----- --------- -----------
+B003  PU003 03-APR-26       70000
+
+SQL> DELETE FROM bill WHERE bill_no = 'B008';
+
+0 rows deleted.
+
+SQL> UPDATE bill SET bill_date = TO_DATE('2023-08-16','YYYY-MM-DD') WHERE bill_no = 'B007';
+
+0 rows updated.
+
+SQL> UPDATE bill SET bill_date = TO_DATE('2023-08-16','YYYY-MM-DD') WHERE bill_no = 'B001';
+
+1 row updated.
+
+SQL> SELECT * FROM bill
+  2  WHERE bill_date BETWEEN TO_DATE('2023-01-01','YYYY-MM-DD')
+  3  AND TO_DATE('2023-12-31','YYYY-MM-DD');
+
+BILL_ PURCH BILL_DATE BILL_AMOUNT
+----- ----- --------- -----------
+B001  PU001 16-AUG-23       25500
+
+SQL> SELECT * FROM transaction;
+
+TXN_I BILL_ TXN_DATE  TXN_MODE             TXN_STATUS
+----- ----- --------- -------------------- ---------------
+T001  B001  08-OCT-26 UPI                  Success
+T002  B002  07-OCT-26 Card                 Success
+
+SQL> SELECT * FROM transaction WHERE txn_status = 'Failed';
+
+no rows selected
+
+SQL> SELECT COUNT(*) FROM transaction WHERE txn_status = 'Success';
+
+  COUNT(*)
+----------
+         2
+
+SQL> SELECT * FROM transaction WHERE txn_mode = 'UPI';
+
+TXN_I BILL_ TXN_DATE  TXN_MODE             TXN_STATUS
+----- ----- --------- -------------------- ---------------
+T001  B001  08-OCT-26 UPI                  Success
+
+SQL> DELETE FROM transaction WHERE txn_id = 'T009';
+
+0 rows deleted.
+
+SQL> SELECT s.first_name, s.last_name, p.purchase_id
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id;
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME                                          PURCH
+-------------------------------------------------- -----
+Rahul
+Nair                                               PU001
+
+Sneha
+Patil                                              PU002
+
+Arjun
+Desai                                              PU003
+
+
+SQL> SELECT s.first_name, i.item_name, pd.quantity
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id
+  4  JOIN purchase_details pd ON p.purchase_id = pd.purchase_id
+  5  JOIN item i ON pd.item_id = i.item_id;
+
+FIRST_NAME
+--------------------------------------------------
+ITEM_NAME                                            QUANTITY
+-------------------------------------------------- ----------
+Rahul
+Smartphone                                                  1
+
+Rahul
+T-Shirt                                                     1
+
+Sneha
+Novel                                                       2
+
+
+FIRST_NAME
+--------------------------------------------------
+ITEM_NAME                                            QUANTITY
+-------------------------------------------------- ----------
+Sneha
+Laptop                                                      2
+
+
+SQL> SELECT s.first_name, SUM(p.total_value) AS total_spent
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id
+  4  GROUP BY s.first_name;
+
+FIRST_NAME                                         TOTAL_SPENT
+-------------------------------------------------- -----------
+Rahul                                                    25500
+Sneha                                                     5300
+Arjun                                                     3400
+
+SQL> SELECT b.bill_no, s.first_name, s.last_name
+  2  FROM bill b
+  3  JOIN purchase p ON b.purchase_id = p.purchase_id
+  4  JOIN shopper s ON p.shopper_id = s.shopper_id;
+
+BILL_ FIRST_NAME
+----- --------------------------------------------------
+LAST_NAME
+--------------------------------------------------
+B001  Rahul
+Nair
+
+B002  Sneha
+Patil
+
+B003  Arjun
+Desai
+
+
+SQL> SELECT DISTINCT s.first_name, s.last_name
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id;
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME
+--------------------------------------------------
+Rahul
+Nair
+
+Sneha
+Patil
+
+Arjun
+Desai
+
+
+SQL> SELECT s.first_name, s.last_name
+  2  FROM shopper s
+  3  LEFT JOIN purchase p ON s.shopper_id = p.shopper_id
+  4  WHERE p.purchase_id IS NULL;
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME
+--------------------------------------------------
+Meera
+Joshi
+
+Priya
+Sharma
+
+
+SQL> SELECT i.item_name, pg.group_name
+  2  FROM item i
+  3  JOIN product_group pg ON i.group_id = pg.group_id;
+
+ITEM_NAME
+--------------------------------------------------
+GROUP_NAME
+------------------------------
+Smartphone
+Electronics
+
+T-Shirt
+Clothing
+
+Novel
+Books
+
+
+ITEM_NAME
+--------------------------------------------------
+GROUP_NAME
+------------------------------
+Laptop
+Pens
+
+
+SQL> SELECT pg.group_name, SUM(pd.price * pd.quantity) AS sales
+  2  FROM product_group pg
+  3  JOIN item i ON pg.group_id = i.group_id
+  4  JOIN purchase_details pd ON i.item_id = pd.item_id
+  5  GROUP BY pg.group_name;
+
+GROUP_NAME                          SALES
+------------------------------ ----------
+Electronics                         25000
+Clothing                              500
+Books                                 600
+Pens                                  800
+
+SQL> SELECT s.first_name, s.last_name, SUM(p.total_value) AS total_spent
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id
+  4  GROUP BY s.first_name, s.last_name
+  5  ORDER BY total_spent DESC FETCH FIRST 1 ROWS ONLY;
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME                                          TOTAL_SPENT
+-------------------------------------------------- -----------
+Rahul
+Nair                                                     25500
+
+
+SQL> SELECT i.item_name, s.first_name, s.area_code
+  2  FROM shopper s
+  3  JOIN purchase p ON s.shopper_id = p.shopper_id
+  4  JOIN purchase_details pd ON p.purchase_id = pd.purchase_id
+  5  JOIN item i ON pd.item_id = i.item_id
+  6  WHERE s.area_code = 'DA';
+
+no rows selected
+
+SQL> WHERE s.area_code = 'DA';WHERE s.area_code = 'DA';WHERE s.area_code = 'DA';WHERE s.area_code = 'DA';
+SP2-0734: unknown command beginning "WHERE s.ar..." - rest of line ignored.
+SQL> COLUMN shopper_id FORMAT A5;
+SQL> COLUMN first_name FORMAT A15;
+SQL> COLUMN last_name FORMAT A15;
+SQL> COLUMN area_code FORMAT A10;
+SQL> COLUMN phone FORMAT A12;
+SQL> SELECT * FROM shopper;
+
+SHOPP FIRST_NAME      LAST_NAME       AREA_CODE  PHONE
+----- --------------- --------------- ---------- ------------
+S001  Rahul           Nair            JK         9876543210
+S002  Sneha           Patil           A102       9123456780
+S003  Arjun           Desai           A103       9988776655
+S004  Meera           Joshi           A104       8899001122
+S005  Priya           Sharma          A105       7766554433
+
+SQL> COLUMN price FORMAT 999999.99;
+SQL> COLUMN total_value FORMAT 9999999.99;
+SQL> COLUMN group_id FORMAT A5;
+SQL> COLUMN group_name FORMAT A20;
+SQL> SELECT * FROM product_group;
+
+GROUP GROUP_NAME
+----- --------------------
+PG01  Electronics
+PG02  Clothing
+PG03  Books
+PG04  Pens
+
+SQL> COLUMN item_id FORMAT A5;
+SQL> COLUMN item_name FORMAT A25;
+SQL> COLUMN group_id FORMAT A5;
+SQL> COLUMN price FORMAT 999999.99;
+SQL> COLUMN stock FORMAT 9999;
+SQL> SELECT * FROM item;
+
+ITEM_ ITEM_NAME                 GROUP      PRICE STOCK
+----- ------------------------- ----- ---------- -----
+I001  Smartphone                PG01    25000.00    50
+I002  T-Shirt                   PG02      500.00   200
+I003  Novel                     PG03      300.00   100
+I004  Laptop                    PG04    55000.00   300
+
+SQL> COLUMN purchase_id FORMAT A5;
+SQL> COLUMN shopper_id FORMAT A5;
+SQL> COLUMN purchase_date FORMAT A12;
+SQL> COLUMN total_value FORMAT 9999999.99;
+SQL> SELECT * FROM purchase;
+
+PURCH SHOPP PURCHASE_DAT TOTAL_VALUE
+----- ----- ------------ -----------
+PU001 S001  08-OCT-26       25500.00
+PU002 S002  07-OCT-26        5300.00
+PU003 S003  10-NOV-26        3400.00
+
+SQL> COLUMN detail_id FORMAT 9999;
+SQL> COLUMN purchase_id FORMAT A5;
+SQL> COLUMN item_id FORMAT A5;
+SQL> COLUMN quantity FORMAT 9999;
+SQL> COLUMN price FORMAT 999999.99;
+SQL> SELECT * FROM purchase_details;
+
+DETAIL_ID PURCH ITEM_ QUANTITY      PRICE
+--------- ----- ----- -------- ----------
+        1 PU001 I001         1   25000.00
+        2 PU001 I002         1     500.00
+        3 PU002 I003         2     300.00
+        4 PU002 I004         2     400.00
+
+SQL> COLUMN bill_no FORMAT A5;
+SQL> COLUMN purchase_id FORMAT A5;
+SQL> COLUMN bill_date FORMAT A12;
+SQL> COLUMN bill_amount FORMAT 9999999.99;
+SQL> SELECT * FROM bill;
+
+BILL_ PURCH BILL_DATE    BILL_AMOUNT
+----- ----- ------------ -----------
+B001  PU001 16-AUG-23       25500.00
+B002  PU002 07-OCT-26         600.00
+B003  PU003 03-APR-26       70000.00
+
+SQL> COLUMN txn_id FORMAT A5;
+SQL> COLUMN bill_no FORMAT A5;
+SQL> COLUMN txn_date FORMAT A12;
+SQL> COLUMN txn_mode FORMAT A15;
+SQL> COLUMN txn_status FORMAT A10;
+SQL> SELECT * FROM transaction;
+
+TXN_I BILL_ TXN_DATE     TXN_MODE        TXN_STATUS
+----- ----- ------------ --------------- ----------
+T001  B001  08-OCT-26    UPI             Success
+T002  B002  07-OCT-26    Card            Success
+
+SQL>
